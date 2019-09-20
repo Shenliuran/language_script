@@ -20,8 +20,23 @@
 8. 设计类层次时，要仔细思考哪些方法和类声明为final
 9. 在进行类型转换之前，先查看是否能成功转换，使用*instanceof*操作符，例如：
 
-```java
-if (stuff[1] instanceof Manager) {
-    boss = (Manager) staff[1];
-}
-```
+    ```java
+    if (stuff[1] instanceof Manager) {
+        boss = (Managerstaff[1];
+    }
+    ```
+
+10. 适用类型转换时，要捕捉**ClassCastException**异常
+11. 只有在使用子类中特有的方法时才需要进行类型转换，如果需要进行类型转换，就应该检查一下超类的设计是否合理。重新设计超类并添加需要的方法才是正确的选择。
+12. 一般情况下，尽量少使用类型转换和instancof运算符
+13. 在实际应用中，要谨慎使用protected属性
+14. 相等性检查：
+    1. 如果子类能够拥有自己的相等概念，则对称性需求将强制采用getClass进行检测
+    2. 如果由超类决定相等的概念，那么就可以使用instanceof进行检测，这样就可以在不同子类之间进行相等的对比
+15. 编写一个完美equals方法的建议：
+    1. 显示参数命名为otherObject，稍后需要将它转化成另一个叫做other的变量
+    2. 检测this与otherObject是否应用同一个对象
+    3. 检测otherObject是否为null，如果为null，返回false。**这项检查是很有必要的**
+    4. 比较this与otherObject是否属于同一个类。如果equals的语义在每个子类中有所改动，就使用getClass检测，如果所有子类都拥有统一的语义，就是用instanceof检测
+    5. 现在开始对所有需要比较的域进行比较。使用==比较基本类型域，使用equals比较对象域。如果所用的域都匹配，就返回true，否则返回false
+16. 
