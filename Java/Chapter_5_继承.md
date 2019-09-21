@@ -22,7 +22,7 @@
 
 ## Object超类
 
-## equals方法
+### equals方法
 
 + 本方法用于检测一个对象是否等于另一个对象，在Object类中，这个方法将判断两个对象是否具有相同的引用。
 + Java语言规范要求equals方法具有下面的特性：
@@ -31,4 +31,42 @@
   3. 传递性： 如果 x.equals(y) return true, 并且 y.equals(z) return true, 那么 x.equals(y) return true;
   4. 一致性： 如果x和y引用对象没有发生变换，反复调用x.equals(y)应该返回相同的结果
   5. 对于任意非空引用x，x.equals(null)应该返回false
-+ 
+
+### toString方法
+
++ 打印数组可以使用Arrays.toString()；
++ 打印多维数组可以使用Arrays.deepToString()；
+
+### 自动装箱
+
++ 如果想写一个修改数值参数值的方法，就需要使用org.omg.CORBA包中定义的持有者（holder）类型，包括IntHolder、BooleanHolder等，如：
+
+    ```java
+    public static void triple(IntHolder x) {
+        x.value = 3 * x.value;
+    }
+    ```
+
+## 反射
+
+### Class类
+
++ 将forName与newInstance配合起来使用，可以根据储存在字符串中的类名创建一个对象如：
+
+    ```java
+    String s = "java.util.Random";
+    Object m = Class.forName(s).newInstance();
+    ```
+
++ 几种常用的get方法：
+  + Field对象：
+    1. getFields()，记录了这个类或其超类的**公用域**
+    2. getDeclaredFields()，记录了这个类的**全部方法**
+  + Method对象：
+    1. getMethods()，返回所有的**公有方法**，*包括从超类中继承来的公用方法*
+    2. getDeclaredMethods()，返回这个*类或接口*的**全部方法**，*但不包括有超类继承的方法*
+  + Constructor对象：
+    1. getConstructors()，描述的类的所有**公有**构造器
+    2. getDeclaredConstructors()，**所有构造器**
+
++ 建议Java开发者不要使用Method对象的回调功能。使用接口进行回调会使得代码的执行速度更快，更易于维护
