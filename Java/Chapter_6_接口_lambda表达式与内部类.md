@@ -134,3 +134,129 @@
     ```java
     String::compareToIgnoreCase /*<==>*/ (x, y) -> x.compareToIgnoreCase(x);
     ```
+
++ 可以在方法引用中使用this参数
+
+    ```java
+    this::equals() /*<==>*/ x -> this.equals(x)
+    ```
+
++ 使用super也是合法的如：super::instanceMethod
+
+### 构造应用
+
++ 构造器引用和方法引用很类似，只不过方法名为new，例如Person::new, 使哪个构造器，取决于上下文
++ 可以用数组类型建立构造器引用。例如int[]::new, 它用一个参数：数组长度。`int[]::new -> new int[x];`
+
+### 变量作用域
+
++ lambda表达式传值实例：
+
+    ```java
+    public static void repeatMessage(String text, int delay) {
+        ActionListener listener = event -> {
+            System.out.println(text);
+            Toolkit.getDefaultToolkit().beep();
+        };
+        new Timer(delay, listener).start();
+    }
+    // 调用示例：
+    repeatMessage("Hello", 1000);//Prints Hello every 1000 milliseconds
+    ```
+
++ lambda表达式中，只能引用值不会改变变量
+
+    ```java
+    public static void contDown(int start, int delay) {
+        ActionListener listener = event -> {
+            start--;//Error: Can't mutate captured variable
+            System.out.println(start);
+        };
+        new Timer(delay, listener).start();
+    }
+    ```
+
++ lambda表达式中引用变量，而这个变量可能在外部改变，这也是不合法的。例如：
+
+    ```java
+    public static void repeat(String text, int count) {
+        for (int i = 1; i <= count; i++) {
+            ActionListener listener = event -> {
+                System.out.println(i + ": " + text);//Error:Cannot refer to changing i;
+            };
+        }
+        new Timer(1000, listener).start();
+    }
+    ```
+
++ lambda表达式的3个部分
+    1. 一个代码块
+    2. 参数
+    3. 自由变量的值，这是指 **非参数而且不在代码中定义的变量**（上文的“Hello”就是自由变量）
++ 规则：lambda表达式中捕获的 **变量必须实际上是最终变量（effectively final）** 。最终变量是指， **这个变量初始化之后就不会再为它赋新值**。
++ lambda表达式中声明与一个局部变量同名的参数或局部变量是不合法的：
+
+    ```java
+    Path first = Paths.get("/usr/bin");
+    Comparator<String> comp = (first, second) -> first.length() - second.length();//Error:variable first already defined
+    ```
+
++ 在lambda表达式中this的含义并没有变化
+
+### 处理lambda表达式
+
++ 使用lambda表达式的重点是 **延迟执行（deferred execution）**。之所以希望以后再执行代码，有很多原因：
+    1. 在一个单独的线程中运行代码
+    2. 多次运行代码，如：
+
+        ```java
+        repeat(10, () -> System.out.println("Hello World"));
+        ```
+
+        接受这个lambda表达式，需要选择（偶尔可能需要提供）一个函数式接口。如，可以使用Runnable接口：
+
+        ```java
+        public static void repeat(int n, Runnable action) {
+            for (int i = 0; i < n; i++) action.run();
+        }
+        ```
+
+        需要说明，**调用action.run()是会执行这个lambda表达式的主体**
+
+    3. 在算法的适当位置运行代码（例如，排序中的比较操作）
+    4. 发生某种情况时执行代码（如，点击一个按钮，数据到达）
+    5. 只在必要时才运行代码
+
++ 常用函数式接口
+
+>函数式接口|参数类型|返回类型|抽象方法名|描述|其他方法
+>|:-----:|:-----:|:----:|:-------:|:-:|:----:|
+>Runnable|无|void|run| 作为无参数或返回值的动作运行
+>Supplier< T >|无|T|get|提供一个T类型的值
+>Consumer< T >|无|accept|处理一个T类型的值| andThen
+>BiConsumer< T, U >|无|void|accept|处理T和U类型的值|andThen
+>Function< T, R >|T|R|apply|有一个T类型的值|compose，andThen，identity
+>BiFunction< T, U, R>|T，U|R|apply|有T和U类型参数的函数|andThen
+>UnaryOperator< T >|T|T|apply|类型T上的一元操作符|compose，andThen，identity
+>BinaryOperator< T >|T，T|T|apply|类型T上的二元操作符|andThen，maxBy，minBy
+>Predicate< T >|T|boolean|test|布尔函数|and，or，negate，isEqual
+>BiPredicate< T, U >|T，U|boolean|test|有两个参数的布尔值函数|and，or，negate
+
++ 基本类型函数接口
+
+>函数式接口|参数类型|返回类型|抽象方法名
+>|:-----:|:-----:|:-----:|:-----:|
+>BooleanSupplier|none|boolean|getAsBoolean
+>PSupplier|none|p|getAsP
+>PConsumer|p|void|accept
+>PFunction< T >|p|T|apply
+>ObjPConsumer< T >|T,p|void|accpet
+>PToQFunction|p|q|applyAsQ
+>ToPFunction< T >|T|p|applyAsP
+>TOPBiFunction< T, U >|T,U|p|applyAsP
+>PUnaryOperator|p|p|applyAsP
+>PBinaryOperator|p,p|p|applyAsP
+>PPredicate|p|boolean|test
+>注释：p,q为int，long，double；P，Q为Integer，Long，Double
+
++ 如果设计的接口，其中只有一个抽象方法，可以用`@FunctionalInterface`注解来标记这个接口
