@@ -68,3 +68,7 @@
     ```java
     if (obj instanceof Cloneable)
     ```
+
+## 内部类
+
+1. 内部类不需要方位外围类对象的时候，应该使用静态内部类

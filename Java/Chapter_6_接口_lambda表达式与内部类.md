@@ -260,3 +260,111 @@
 >注释：p,q为int，long，double；P，Q为Integer，Long，Double
 
 + 如果设计的接口，其中只有一个抽象方法，可以用`@FunctionalInterface`注解来标记这个接口
+
+### 再谈Comparator
+
++ 静态comparing方法取一个“键提取函数”，它将T映射为一个可比较的类型（如：String）如：
+
+    ```java
+    Arrays.sort(people, Comparator.comparing(Person::getName));
+    ```
+
++ 可以把比较器与thenComparing方法串联起来，例如：
+
+    ```java
+    Arrays.sort(people,
+        Comparator.comparing(Person::getLastName).thenComparing(Person::getFirstName));
+    ```
+
++ 这些方法有变体，如：
+
+    ```java
+    Arrays.sort(people Comparator.comparing(Person::getName, (s, t) -> s.length() - t.length()));
+    ```
+
++ comparing和thenComparing方法都有很多变体形式，可以避免int，long和double基本类型的装箱。要完成前一个操作，还有一种更容易的做法：
+
+    ```java
+    Arrays.sort(people, Comparator.comparing(p -> p.getName().length()));
+    ```
+
+## 内部类
+
++ 使用内部类的原因：
+    1. 内部类的方法可以访问该类定义所在的作用域中的数据，包括私有数据
+    2. 内部类可以对同一个保重的其他类隐藏起来
+    3. 想要定义一个回调函数且不想写大量的代码是，使用匿名内部类比较便捷
+
+### 内部类的特殊语法规则
+
++ 表达式`OuterClass.this`，表示外围类的引用
++ 可以采用下列语法格式更加明确地编写内部类对象构造器：
+
+    ```java
+    outerObject.new InnerClass(construction parameters)
+    ```
+
++ 内部类声明中所有静态域都必须是final
++ 内部类不能有static方法
++ 局部类（局部内部类）不能使用public或private访问说明符进行声明。
++ 局部类不仅可以访问包含它们的外部类，还可以访问局部变量。不过，这些局部变量必须事实上为final。这说明，它们一旦赋值就绝不会改变
++ 双括号初始化：
+
+    ```java
+    ArrayList<String> friends = new ArrayList<>();
+    friends.add("Harry");
+    friends.add("Tony");
+    invite(friends);
+    /* <==> */
+    invite(new ArrayList<String>() {
+        { add("Harry") };
+        { add("Tony") };
+    });
+    ```
+
+    外层括号建立了ArrayList的一个匿名子类。内层括号则是一个对象构造快
+
++ 生成日志或者调试消息时，通常希望包含当前类的类名，如：`System.out.println("Something awful happened in " + getClass());`</br>
+不过，对于静态方法不奏效。毕竟。调试getClass时调用的是this.getClass()，而静态方法没有this。所以应该使用以下表达式：
+
+    ```java
+    new Object(){}.getClass().getEnclosing();//gets class of static method
+    ```
+
+在这里，`new Object(){}`会建立Object的一个匿名子类的一个匿名对象，`getEnclosingClass`则得到其外围类，也就时包含这个静态方法的类
+
++ 有时候，使用内部类只是为了把一个类隐藏在另一个类的内部，并不需要内部类引用外围类对象。为此，可以将内部类声明为static，以便取消产生的引用
++ 只有内部类可以声明为static
++ 静态内部类可以有静态域和静态方法
++ 声明在接口中的内部类自动变成static和public类
+
+## 代理
+
++ 利用代理可以在运行时创建一个实现了一组给定接口的新类。这种功能只有在 **编译无法确定需要实现哪个接口时才有必要实现**。
++ 代理类具有下列方法：
+    1. 指定接口的全部方法
+    2. Object类中的全部方法，例如，`toString`，`equals`等
++ 需要提供一个**调用处理器**。调用处理器是实现`InvocationHandler`接口的类。在这个接口中只有一个方法：
+
+    ```java
+    Object invoke(Object proxy, Method method, Object[] args)
+    ```
+
++ 想创建一个代理对象，需要使用Proxy类的`newProxyInstance`方法。这个方法有三个参数：
+    1. 一个 **类加载器**
+    2. 一个Class对象数组
+    3. 一个调用处理器
++ 使用代理的原因
+    1. 路由对远程服务器的方法调用
+    2. 在程序运行期间，将用户接口事件与动作关联起来
+    3. 为调试，跟踪方法调用
++ 代理类是在程序运行过程中创建的，一旦被创建，就变成了常规类
++ 使用同一个类加载器和接口数组调用两侧`newProxyInstance`方法的话，只能够得到同一个类的两个对象，也可以利用`getProxyClass`方法获得这个类：
+
+    ```java
+    Class proxyClass = Proxy.getProxyClass(null, interface);
+    ```
+
++ 代理类一定是public和final
++ 如果代理类实现的所有接口都是public，代理类就不属于某个特定的包；否则，所有非公有的接口都必须属于同一个包，同时代理类也属于这个包
++ 可以通过Proxy类中的`isProxyClass`方法检测Class对象是否是一个代理类
