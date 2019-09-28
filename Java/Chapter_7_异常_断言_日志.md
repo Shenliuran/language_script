@@ -2,7 +2,7 @@
 
 + 所有异常都是由Throwable继承来的，下一层分解为Error和Exception:
 
-    ![avatar](../images/Java中的异常层次结构.png)
+![avatar](../images/Java中的异常层次结构.png)
 
 + 应用程序不应该抛出Error类型的对象
 + 由于程序错误导致的异常属于RuntimeException

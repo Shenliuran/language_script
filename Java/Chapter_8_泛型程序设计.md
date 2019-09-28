@@ -40,3 +40,63 @@
     ```
 
     因为T是一个无限定的变量，所以直接用Object替换（称为`SomeClass<T>`的原始类型）
++ 假定声明了一个不同的类型：
+
+    ```java
+    public class Interval<T extends Comparable & Serializable> implements Serializable {
+        private T lower;
+        private T upper;
+
+        public Interval(T first, T second) {
+            if (first.compareTo(second) <= 0) {
+                lower = first; upper = second;
+            }
+            else {
+                lower = second; upper = first;
+            }
+        }
+    }
+    ```
+
+    原始类型的Interval如下：
+
+    ```java
+    public class Interval implements Serializable {
+        private Comparable lower;
+        private Comparable upper;
+
+        public Interval(Comparable first, Comparable second) {...}
+    }
+    ```
+
+    此时类型擦除后，会使用 **限定列表的第一个类（或接口）** 替换
+
+### 翻译泛型表达式
+
++ 当程序调用泛型方法时，如果擦除返回类型，编译器插入强制类型转换。如：
+
+    ```java
+    Pair<Employee> buddies = ...;
+    Employee buddy = buddies.getFirst();
+    ```
+
+    擦除getFirst的返回类型后返回Object类型，编译器自动插入Employee的强制类型转换
+
++ 有关Java泛型转换的事实：
+    1. 虚拟机中没有泛型，只有普通的类和方法
+    2. 所有的类型参数都用它们的限定类型替换
+    3. 桥方法被合成来保持多态
+    4. 为了保持类型安全性，必要时插入强制类型转换
+
+### 调用遗留代码
+
++ 设计Java泛型类型时，主要目标是允许泛型代码和遗留代码之间能够相互操作
+
+## 约束与局限性
+
++ 不能用基本类型实例化参数类型
++ 运行时类型查询只适用于原始类型：虚拟机中的对象总有一个特定的非泛型类型，因此，所有的类型查询只产生原始类型
++ 不能创建参数化类型的数组
+    1. 需要说明的是，只是不允许创建这些数组，而声明类型变量`Pair<String>[]`的变量仍是合法的，不过不能用`new Pair<String>[10]`初始化这个变量
+    2. 如果要收集参数化类型对象，只有一种安全而有效的方法：使用`ArrayList:ArrayList<Pair<String>>`
++ Varargs警告
