@@ -99,4 +99,42 @@
 + 不能创建参数化类型的数组
     1. 需要说明的是，只是不允许创建这些数组，而声明类型变量`Pair<String>[]`的变量仍是合法的，不过不能用`new Pair<String>[10]`初始化这个变量
     2. 如果要收集参数化类型对象，只有一种安全而有效的方法：使用`ArrayList:ArrayList<Pair<String>>`
-+ Varargs警告
++ Varargs警告</br>
+    1. 可以使用两种方法来抑制警告
+       1. @SupperssWarmings("unchecked")
+       2. @SafeVarargs
++ 不能实例化类型变量
++ 不能构造泛型数组
++ 泛型类的静态上下文中类型变量无效
++ 不能抛出或捕获泛型类的实例
+    1. catch子句中不能使用类型变量。例如，一下方法将不能编译：
+
+        ```java
+        public static <T extends Throwable> void doWork(Class<T> t) {
+            try {
+                // do work
+            } catch (T e) {
+                Logger.global.info(...);
+            }
+        }
+        ```
+
+    2. 在异常规范中使用类型变量时允许的。以下方法是合法的：
+
+        ```java
+        public static <T extends Throwable> void doWork(T t) throw T { // OK
+            try {
+                // do work
+            } catch (Throwable realCase) {
+                t.initCause(realCase);
+                throw t;
+            }
+        }
+        ```
+
++ 可以消除对受查异常的检查
++ 注意擦除后的冲突
+
+## 泛型类型的继承规则
+
++ 无论`S`与`T`有什么关系，通常，`Pair<S>`与`Pair<T>`没什么关系（但是如果`S`可转化为`T`，那么`S[]`可以转化为`T[]`）

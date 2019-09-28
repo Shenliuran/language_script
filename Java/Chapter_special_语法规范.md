@@ -82,4 +82,11 @@
 1. 类型变量使用大写形式，且比较短。
 2. Java库中，使用`E`表示 *集合的元素类型*， `K`表示 *关键字*，`K`表示 *值*，`T`、`U`、`S`表示 *任意类型*
 3. 为了提高效率，应该将标签接口（即没有方法的接口）放在边界列表（即限定列表）的末尾
-4. 
+4. 想要支持擦除的转换，就需要强制限制一个类或者类型变量不能同时称为两个接口类型的子类，而这两个接口是同一接口的不同参数化，例如：
+
+    ```java
+    class Employee implements Comparable<Employee> {...}
+    class Manager extends Employee implements Comparable<Manager> {...}//Error
+    ```
+
+    Manager会实现`Comparable<Employee>`和`Comparable<Manager>`，这是同一接口的不同参数化
