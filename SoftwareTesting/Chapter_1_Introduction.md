@@ -41,19 +41,3 @@
     3. software products are getting larger and more complicated
     4. software is written by human-human make mistakes
     5. software testing looks to find the most important defect as early as possible-increasing confidence that the software meets specification
-+ Testing important concept
-    1. error / mistakes
-    2. faults
-    3. failures
-    4. debug
-    5. verification and validation
-    6. test case
-
-+ Type of testing:
-    1. manual testing
-    2. automation testing
-+ Level of testing
-    1. unit testing (chapter 3)
-    2. integrate testing (chapter 6)
-    3. system testing (chapter 7)
-    4. UAT (chapter 7)
