@@ -26,6 +26,10 @@
 + [Chapter 1 简介](https://github.com/Shenliuran/study-notes/blob/master/SoftwareEngineering/Chapter_1_简介.md)
 + [Chapter 2 软件过程](https://github.com/Shenliuran/study-notes/blob/master/SoftwareEngineering/Chapter_2_软件过程.md)
 
-## UML
+## UML_Self_Learning
 
 + [Chapter 1 UML介绍 (To be continued)](https://github.com/Shenliuran/study-notes/blob/master/UML/Chapter_1_UML介绍.md)
+
+## UML_English
+
++ [Chapter 1]()
