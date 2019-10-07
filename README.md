@@ -8,7 +8,8 @@
 + [Chapter 5 继承](https://github.com/Shenliuran/study-notes/blob/master/Java/Chapter_5_继承.md)
 + [Chapter 6 接口](https://github.com/Shenliuran/study-notes/blob/master/Java/Chapter_6_接口_lambda表达式与内部类.md)
 + [Chapter 7 异常、断言、日志](https://github.com/Shenliuran/study-notes/blob/master/Java/Chapter_7_异常_断言_日志.md)
-+ [Chapter 8 泛型泛型程序设计(...)](https://github.com/Shenliuran/study-notes/blob/master/Java/Chapter_8_泛型程序设计.md)
++ [Chapter 8 泛型泛型程序设计](https://github.com/Shenliuran/study-notes/blob/master/Java/Chapter_8_泛型程序设计.md)
++ [Chapter 9 集合(...)](https://github.com/Shenliuran/study-notes/blob/master/Java/Chapter_9_集合.md)
 
 ## 操作系统
 
@@ -33,3 +34,11 @@
 ## UML_English
 
 + [Chapter 1 (...)](https://github.com/Shenliuran/study-notes/blob/master/UML_English/Chpater_1.md)
+
+## ARM体系结构
+
++ [Chapter 1 ARM概述及其基本编程模型](https://github.com/Shenliuran/study-notes/blob/master/ARM/Chapter_1_ARM概述及其基本编程模型.md)
+
+## MySQL
+
++ [Chapter 2 MySQL基础](https://github.com/Shenliuran/study-notes/blob/master/MySQL/Chpater_2_MySQL基础.md)

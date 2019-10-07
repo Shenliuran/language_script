@@ -142,3 +142,20 @@
 ![avatar](../images/泛型列表类型中子类型间的关系.png)
 
 ## 通配符类型
+
++ 直观的讲，带有超类型限定的通配符可以向泛型对象写入，带有子类型限定的通配符可以从泛型对象读取
+
++ `Pair<?>`和Pair原始类型的本质不同在于：可以用任意类型Object对象调用原始Pair类的setObject方法
++ 通配符不是类型变量
++ 通配符捕获只有在许多限制的情况下才是合法的。编译器必须能够确信通配符表达的是单个、确定的类型
+
+## 反射与泛型
+
++ 为了表达泛型类型声明，使用`java.lang.reflect`包中提供的接口`Type`。这个接口包含下列子类型：
+    1. `Class`类：描述具体类型
+    2. `TypeVariable`接口：描述类型变量（如 `T extends Comparable<? super T>`
+    3. `WildcardType`接口：描述通配符（如：`? super T`）
+    4. `ParameterizedType`接口：表述泛型类或接口类型（如：`Comparable<? super T>`
+    5. `GenericArrayType`接口：描述泛型数组
++ Type类和它的后代</br>
+![avatar](../images/Type类和它的后代.png)
