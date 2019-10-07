@@ -41,4 +41,4 @@
 
 ## MySQL
 
-+ [Chapter 2 MySQL基础](https://github.com/Shenliuran/study-notes/blob/master/MySQL/Chpater_2_MySQL基础.md)
++ [Chapter 2 MySQL基础](https://github.com/Shenliuran/study-notes/blob/master/MySQL/Chapter_2_MySQL基础.md)
