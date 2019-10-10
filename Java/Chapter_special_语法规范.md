@@ -90,3 +90,8 @@
     ```
 
     Manager会实现`Comparable<Employee>`和`Comparable<Manager>`，这是同一接口的不同参数化
+
+## 集合
+
+1. 议避免使用以整数索引表示链表中位置的所有方法
+2. 如果需要对集合进行随机访问，就使用数组或 ArrayList，而不要使用链表
