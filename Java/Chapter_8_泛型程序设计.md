@@ -139,7 +139,7 @@
 
 + 无论`S`与`T`有什么关系，通常，`Pair<S>`与`Pair<T>`没什么关系（但是如果`S`可转化为`T`，那么`S[]`可以转化为`T[]`）
 + 泛型列表类型中子类型间的联系</br>
-![avatar](../images/泛型列表类型中子类型间的关系.png)
+![avatar](../images/Java/泛型列表类型中子类型间的关系.png)
 
 ## 通配符类型
 
@@ -158,4 +158,4 @@
     4. `ParameterizedType`接口：表述泛型类或接口类型（如：`Comparable<? super T>`
     5. `GenericArrayType`接口：描述泛型数组
 + Type类和它的后代</br>
-![avatar](../images/Type类和它的后代.png)
+![avatar](../images/Java/Type类和它的后代.png)

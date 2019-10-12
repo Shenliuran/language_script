@@ -39,13 +39,13 @@
 ## 进程的状态及其组成 **（很重要）**
 
 + 进程的状态转换图</br>
-![avatar](../images/进程的状态转换图.png)
+![avatar](../images/OperatingSystem/进程的状态转换图.png)
 
 + 单挂起的进程的状态转化图</br>
-![avatar](../images/单挂起的进程转换图.png)
+![avatar](../images/OperatingSystem/单挂起的进程转换图.png)
 
 + 双挂起的进程的状态转化图</br>
-![avatar](../images/双挂起的进程转换图.png)
+![avatar](../images/OperatingSystem/双挂起的进程转换图.png)
 
 ### 进程控制块PCB
 
