@@ -178,4 +178,39 @@
 ### 轻量级集合包装器
 
 + `Collections.nCopies(n, anObject)`将返回一个实现List接口的不可修改的对象
-+ `Collections.singleton(anObject)`将返回一个视图对象，这个对象
++ `Collections.singleton(anObject)`将返回一个视图对象，这个对象实现了Set接口，返回的对象实现了一个不可修改的单元素集
++ 类似地，对于集合框架中的每一个接口，还有一些方法可以生成空集、 列表、 映射，等等
++ 特别是， 集的类型可以推导得出：`Set<String> deepThoughts = Collections.emptySet()`
+
+## 不可修改的视图
+
++ 可以使用下面8个方法获得不可修改视图：
+    1. `Collections.unmodifiableCollection`
+    2. `Collections.unmodifiableList`
+    3. `Collections.unmodifiableSet`
+    4. `Collections.unmodifiableSortedSet`
+    5. `Collections.unmodifiableNavigateSet`
+    6. `Collections.unmodifiableMap`
+    7. `Collections.unmodifiableSortedMap`
+    8. `Collections.unmodifiableNavigateMap`
++ 这些视图对现有集合增加了一个运行时的检查，如果试图对集合进行修改，就 **抛出一个异常**，同时这个集合 **仍然保持未修改状态**
++ 所有的更改器方法（例如， add) 已经被重新定义为抛出一个`UnsupportedOperationException`异常，**而不是将调用传递给底层集合**
++ Collections.unmodifiableCollection方法的equals方法不调用底层集合的equals方法，而是继承了Object类的equals，**只会比较两个对象是否是同一个对象
++ Collections.unmodifiableSet方法和Collections.unmodifiableMap方法，使用底层集合的equals方法和hashCode方法
+
+### 受查视图
+
++ 用来对泛型类型发生问题时提供调试支持
+
+## 算法
+
+### 集合与数组的转换
+
++ 数组转化为集合：
+
+    ```java
+    String[] values;
+    HashSet<String> staff = new HashSet(ArrayList.asList(values));
+    ```
+
++ 集合转化为数组：`Object[] values = staff.toArray();`，这样得到的是一个对象数组，toArray返回的是一个`Object[]`

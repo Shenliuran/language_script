@@ -175,3 +175,122 @@
             剩余区；
         }
     ```
+
+## 经典的进程同步问题
+
++ 生产者——消费者问题
+    1. 问题定义：两个进程共享一个环形缓冲池，一组进程称为生产者，另一组称为消费者
+    2. 问题分析：生产者和消费者需要同步，生产者（消费者）之间需要同步
+    3. 代码分析：
+
+        ```cpp
+        semaphore mutex = 1;
+        semaphore empty = n;
+        semaphore full = 0;
+
+        void producer() {
+            while (true) {
+                produce an item in data_p;
+                P(empty);
+                P(mutex);
+                buffer[i] = data_p;
+                i = (i + 1) % n;
+                V(mutex);
+                V(full);
+            }
+        }
+
+        void consumer() {
+            while (true) {
+                P(full);
+                P(mutex);
+                data_c = buffer[j];
+                j = (j + 1) % n;
+                V(mutex);
+                V(empty);
+                consume the item in data_c;
+            }
+        }
+
+    4. 应该先进行资源的P操作，再进行控制权的P操作
+
++ 读者——写者问题
+    1. 代码分析：
+
+        ```cpp
+        semaphore wMutex, rMutex = 1;
+        int rCount;
+
+        void reader() {
+            while (true) {
+                P(rMutex);
+                if (rCount == 0) P(wMutex);
+                rCount = rCount + 1;
+                read();
+                P(rMutex);
+                rCount = rCount - 1;
+                if (rCount == 0) V(wMutex);
+                V(rMutex);
+            }
+        }
+
+        void writer() {
+            while (true) {
+                P(wMutex);
+                write();
+                V(wMutex);
+            }
+        }
+        ```
+
+        以上是读者优先策略
++ 哲学家进餐问题
+    1. 代码分析：
+
+        ```cpp
+        semaphore chopstick[] = { 1, 1, 1, 1, 1};
+        void philosopher(int i) {
+            while (true) {
+                P(chopstick[i]);
+                P(chopstick[i + 1] % chopstick.length);
+                eating;
+                V(chopstick[i]);
+                V(chopstick[i + 1] % chopstick.length);
+                thinking;
+            }
+        }
+        ```
+
++ 打瞌睡的理发师问题
+    1. 代码分析：
+
+        ```cpp
+        #define CHAIRS 5
+        semaphore customers = 0;
+        semaphore barbers = 0;
+        semaphore mutex = 1;
+        int waiting;
+
+        void barber() {
+            while (true) {
+                P(customers); //如果没有顾客，理发师就打瞌睡
+                P(mutex);
+                waiting--;
+                V(barbers); //理发师准备理发
+                V(mutex);
+                cut_hair(); //理发
+            }
+        }
+
+        void customer() {
+            P(mutex);
+            if (waiting < CHAIRS) { //如果有空位，则顾客等待
+                waiting++;
+                V(customers); //如果有必要，唤醒理发师
+                V(mutex);
+                P(barbers); //如果理发师正在理发，则顾客等待
+                get_haircut();
+            }
+            else //如果没有空位，顾客离开
+                V(mutex);
+        }
