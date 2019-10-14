@@ -73,3 +73,11 @@
         ```
 
 + 首选项API
+    1. `Preferences`类以一种平台无关的方式提供了这样一个中心存储库
+        1. Windows：注册列表
+        2. Linux：存储在本地文件系统中
+    2. Preferences存储库有一个树状节点，存储库的各个节点分别有一个单独的键值对表，可以用来存储数值、字符串类或字节数组，但不能存储可串行化的对象
+    3. 若要访问树中的一个节点，需要从 *用户* 或 *系统根* 开始：`Preferences root = Preferences.userRoot();`</br>或</br>`Preferences root = Preferences.systemRoot();
+    4. 如果节点的路径名等于类的包名，还有一种便捷方式来获得这个节点：</br>
+    `Preferences node = Preferences.userNodeForPackage(obj.getClass());`</br>或</br>
+    `Preferences node = Preferences.systemNodeForPackage(obj.getClass());`</br>一般来说，obj往往是this引用
