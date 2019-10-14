@@ -9,12 +9,16 @@
 + [Chapter 6 接口](https://github.com/Shenliuran/study-notes/blob/master/Java/Chapter_6_接口_lambda表达式与内部类.md)
 + [Chapter 7 异常、断言、日志](https://github.com/Shenliuran/study-notes/blob/master/Java/Chapter_7_异常_断言_日志.md)
 + [Chapter 8 泛型泛型程序设计](https://github.com/Shenliuran/study-notes/blob/master/Java/Chapter_8_泛型程序设计.md)
-+ [Chapter 9 集合(...)](https://github.com/Shenliuran/study-notes/blob/master/Java/Chapter_9_集合.md)
++ [Chapter 9 集合](https://github.com/Shenliuran/study-notes/blob/master/Java/Chapter_9_集合.md)
++ [Chapter 13 部署Java应用程序(...)](https://github.com/Shenliuran/study-notes/blob/master/Java/Chapter_13_部署Java应用程序.md)
++ [Chapter 14 并发(...)](https://github.com/Shenliuran/study-notes/blob/master/Java/Chapter_14_并发.md)
 
 ## 操作系统
 
 + [Chapter 1 操作系统引论](https://github.com/Shenliuran/study-notes/blob/master/OperatingSystem/Chapter_1_操作系统引论.md)
-+ [Chapter 2 进程与线程(...)](https://github.com/Shenliuran/study-notes/blob/master/OperatingSystem/Chapter_2_进程与线程.md)
++ [Chapter 2 进程与线程](https://github.com/Shenliuran/study-notes/blob/master/OperatingSystem/Chapter_2_进程与线程.md)
++ [Chapter 3 进程的同步与通信](https://github.com/Shenliuran/study-notes/blob/master/OperatingSystem/Chapter_3_)
++ [Chapter 4 调度与死锁(...)](https://github.com/Shenlinran/study-notes/blob/master/OperatingSystem.Chapter_4_调度与死锁.md)
 
 ## 软件测试
 
