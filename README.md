@@ -51,7 +51,7 @@
 + [Chapter 2 MySQL基础](https://github.com/Shenliuran/study-notes/blob/master/MySQL/Chapter_2_MySQL基础.md)
 + [Chapter 3 MySQL支持的数据类型](https://github.com/Shenliuran/study-notes/blob/master/MySQL/Chapter_3_MySQL%E6%94%AF%E6%8C%81%E7%9A%84%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B.md)
 + [Chapter 4 MySQL中的运算符](https://github.com/Shenliuran/study-notes/blob/master/MySQL/Chpater_4_MySQL中的运算符.md)
-+ [Chapter 5 常用函数](https://github.com/Shenliuran/study-notes/blob/master/MySQL/Chpater_5_常用函数.md)
++ [Chapter 5 常用函数](https://github.com/Shenliuran/study-notes/blob/master/MySQL/Chapter_5_常用函数.md)
 + [Chapter 7 表类型（储存引擎）的选择 (...)](https://github.com/Shenliuran/study-notes/blob/master/MySQL/Chapter_7_表类型（储存引擎）的选择.md)
 
 ## JavaScript
