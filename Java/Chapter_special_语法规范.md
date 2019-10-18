@@ -100,3 +100,43 @@
 
 1. 习惯上，会把属性存储在用户主目录的一个子目录中，目录名通常以一个点号开头，约定只是一个对用户隐藏的系统目录
 2. 类似于包名， 只要程序员用逆置的域名作为路径的开头， 就可以避免命名冲突
+
+## 并发
+
+1. 不要将`InterruptedException`异常抑制在很低的层次上，如：
+
+    ```java
+    void mySubTask() {
+        try {
+            sleep(delay);
+        } catch (InterruptedException e) {}//Don't ignore
+    }
+    ```
+
+2. 如果不认为在 catch 子句中做这一处理有什么好处的话，仍然有两种合理的选择：
+    1. 在 catch 子句中调用 Thread.currentThread().interrupt() 来设置中断状态。于是，调用者可以对其进行检测：
+
+        ```java
+        void mySubTask() {
+            try {
+                sleep(delay);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }
+        ```
+
+    2. 或者，更好的选择是，用 `throws InterruptedException` 标记你的方法：
+
+        ```java
+        void mySubTask() throws InterruptedException {
+            ...
+            sleep(delay);
+            ...
+        }
+        ```
+
+3. 不要将程序构建为功能的正确性依赖于优先级
+4. 守护线程应该永远不去访问固有资源， 如文件、 数据库，因为它会在任何时候甚至在一个操作的中间发生中断。
+5. 默认情况下，创建的所有线程属于相同的线程组， 但是， 也可能会建立其他的组。现在引入了更好的特性用于线程集合的操作，所以建议不要在自己的程序中使用线程组
+6. 如果使用锁， 就不能使用带资源的 try 语句
