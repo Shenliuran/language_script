@@ -18,7 +18,7 @@
 + [Chapter 1 操作系统引论](https://github.com/Shenliuran/study-notes/blob/master/OperatingSystem/Chapter_1_操作系统引论.md)
 + [Chapter 2 进程与线程](https://github.com/Shenliuran/study-notes/blob/master/OperatingSystem/Chapter_2_进程与线程.md)
 + [Chapter 3 进程的同步与通信](https://github.com/Shenliuran/study-notes/blob/master/OperatingSystem/Chapter_3_)
-+ [Chapter 4 调度与死锁(...)](https://github.com/Shenlinran/study-notes/blob/master/OperatingSystem.Chapter_4_调度与死锁.md)
++ [Chapter 4 调度与死锁(...)](https://github.com/Shenlinran/study-notes/blob/master/OperatingSystem/Chapter_4_调度与死锁.md)
 
 ## 软件测试
 
@@ -52,7 +52,7 @@
 + [Chapter 3 MySQL支持的数据类型](https://github.com/Shenliuran/study-notes/blob/master/MySQL/Chapter_3_MySQL%E6%94%AF%E6%8C%81%E7%9A%84%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B.md)
 + [Chapter 4 MySQL中的运算符](https://github.com/Shenliuran/study-notes/blob/master/MySQL/Chpater_4_MySQL中的运算符.md)
 + [Chapter 5 常用函数](https://github.com/Shenliuran/study-notes/blob/master/MySQL/Chpater_5_常用函数.md)
-+ [Chapter 7 表类型（储存引擎）的选择 (...)](https://github.com/Shenliuran/study-notes/blob/master/MySQL/Chpater_7_表类型（储存引擎）的选择.md)
++ [Chapter 7 表类型（储存引擎）的选择 (...)](https://github.com/Shenliuran/study-notes/blob/master/MySQL/Chapter_7_表类型（储存引擎）的选择.md)
 
 ## JavaScript
 
@@ -62,4 +62,4 @@
 
 ## Linux
 
-+ [Chapter 4 首次登陆与在线求助 (...)](https://github.com/Shenliuran/study-notes/blob/master/Linux/Chapter_4_首次登陆与在线求助.md)
++ [Chapter 4 首次登陆与在线求助 (...)](https://github.com/Shenliuran/study-notes/blob/master/Linux/Chapter_4_首次登录与在线求助.md)
