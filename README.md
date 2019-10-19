@@ -38,4 +38,5 @@
 
 ## Linux
 
-+ [Chapter 4 首次登陆与在线求助 (...)](https://github.com/Shenliuran/language_script/blob/master/Linux/Chapter_4_首次登录与在线求助.md)
++ [Chapter 5 首次登陆与在线求助](https://github.com/Shenliuran/language_script/blob/master/Linux/Chapter_5_首次登录与在线求助.md)
++ [Chapter 6 Linux文件权限和目录配置 (...)](https://github.com/Shenliuran/language_script/blob/master/Linux/Chapter_6_Linux文件权限和目录配置.md)
