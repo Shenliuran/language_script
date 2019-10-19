@@ -114,6 +114,13 @@
     grant select, insert on test1.* to 'user1'@'localhost';
     ```
 
++ 授予所有权限：
+
+    ```sql
+    grant all privileges on test1 to 'user1'@'localhost';--数据库权限
+    grant all privileges on test1.* to 'user1'@'localhost';--表权限
+    ```
+
 + 权限变更，收回数据库用户user1，host为localhost，insert权限：`revoke insert on test1.* to 'user1'@'localhost'`;
 
 ### 按照层次看帮助
