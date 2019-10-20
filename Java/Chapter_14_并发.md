@@ -375,4 +375,83 @@
 
 + 批操作会遍历映射，处理遍历过程中找到的元素。无须冻结当前映射的快照
 + 有三种不同的操作：
-    1. 搜索
+    1. 搜索（search）：为每个键或值提供一个函数，直到函数生成一个 **非null的结果**，搜索停止，**返回这个函数的结果**
+    2. 归约（reduce）：组合所有的键或值，使用一个所提供的累加函数
+    3. forEach：为所有键或值提供一个函数
++ 每个操作都有四个版本：
+    1. `operationKeys`：处理键
+    2. `operationValues`：处理值
+    3. `operation`：处理键和值
+    4. `operationEntries`：处理`Map.Entry`对象
++ 上述各个操作，需要指定一个 **参数化阈值**（parallelism threshold），如果映射包含的元素多于这个阈值，就会并行完成批操作
++ 如果希望批操作在一个线程中运行，可以将阈值设置为`Long.MAX_VALUE`；如果希望进尽可能地多的线程运行批操作，可以将阈值设置为1
+
+### 并发集视图
+
++ 生成一个大的线程安全的集，因为没有ConcurrentHashSet类， 所以需要使用ConcurrentHashMap生成：
+
+    ```java
+    Set<String> words = ConcurrentHashMap.<String>newKeySet();
+    ```
+
+    这个实际上是`ConcurrentHashMap<K, Boolean>`的一个包装器，所有映射值都是`Boolean.TRUE`，只不过因为要把它当作一个集，所以并不关心具体的值</br>
+    Java SE 8中，为ConcurrentHashMap增加了第二个keySet方法，包含一个默认值，可以在为集增加元素时使用：
+
+    ```java
+    Set<String> words = map.keySet(1L);
+    words.add("java");
+    ```
+
+### 数组的拷贝
+
++ `CopyOnWriteArrayList`和`CopyOnWriteArraySet`是线程安全的集合
+
+### 并行数组算法
+
++ `Arrays.parallelSort`方法可以对一个 **基本类型** 或 **对象类型** 的数组排序
+    1. 对对象排序时，可以提供一个Comparator：`Arrays.parallelSort(words, Comparator.comparing(String::length));`
+    2. 对于所有方法都可以提供一个范围的边界：`values.parallelSort(values.length / 2, values.length);`
++ `parallelSetAll`方法，调用一个函数计算得到的值填充一个数组，这个函数接受 **元素索引**，然后计算相应位置上的值：
+
+    ```java
+    Arrays.parallelSetAll(values, i -> i % 10);
+    //Fills values with 0 1 2 3 4 5 6 7 8 9 0 1 ...
+
++ `parallelPrefix`方法，用对应一个给定结合操作的前缀的累加结果替换各个数组元素（P680）
+
+## Callable和Future
+
++ Runnable封装一个异步运行的任务，可以想象成为一个没有参数和返回值的异步方法
++ Callable与Runnable相似，但是 **有返回值**：
+
+    ```java
+    public interface Callable<V> {
+        V call() throws Exception;
+    }
+    ```
+
++ Future保存异步运行的 **结果**：
+
+    ```java
+    public interface Future<V> {
+        V get() throws ...;//方法的调用被阻塞， 直到计算完成
+        V get(long timeout, TimeUnit unit) throws ...;//调用超时，拋出一个 TimeoutException 异常
+        //如果运行该计算的线程被中断，两个方法都将拋出 InterruptedException。如果计算已经完成， 那么 get 方法立即返回
+        void cancel(boolean mayInterrupt);//如果计算处于运行之中，那么如果 mayInterrupt 参数为 true, 它就被中断
+        boolean isCancelled();//取消该计算
+        boolean isDone();//。如果计算还在进行，isDone 方法返回 false; 如果完成了， 则返回 true
+    }
+    ```
+
++ `FutureTask`包装器，可以将Future转换成Callable和Runnable：
+
+    ```java
+    Callable<Integer> myComputation = . . .;
+    FutureTask<Integer> task = new FutureTask<Integer>(myComputation);
+    Thread t = new Thread(task); // it's a Runnable
+    t.start();
+    Integer result = task.get();// it's a Future
+
+## 执行器
+
++ 如果程序中创建了大量的 **生命期很短的线程**，应该使用 **线程池**（thread pool）
