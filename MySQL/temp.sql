@@ -1,2 +1,2 @@
-use mydatabase;
-show table status like 'city' \G
+USE mydatabase;
+SELECT * FROM tab_memory;

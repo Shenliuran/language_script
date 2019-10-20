@@ -212,4 +212,167 @@
 
 ### 原子性
 
++ `java.util.concurrent.atomic`包中有很多类使用了很高效的机器级指令（而不是使用锁）来保证其他操作的原子性
++ 例如`AtomicInteger`类提供了`incrementAndGet`和`decrementAndGet`，分别以原子方法将一个整数自增和自减
+
 ### 死锁
+
+### 线程局部变量
+
++ 使用`ThreadLocal`辅助类为各自的线程提供各自的实例
++ 为每一个线程构造一个实例，案例代码：
+
+    ```java
+    public static final ThreadLocal<SimpleDateFormat> dateFormat =
+        ThreadLocal.withInitial(() -> new SimpleDateFormat("yyyy-mm-dd"));
+    ```
+
++ 访问格式：`String dateStamp = dateFormat.get().format(new Date());`，在一个给定线程中首次调用 get 时， 会调用 `initialValue` 方法。在此之后， get 方法会 **返回属于当前线程的那个实例**
++ 可以使用 ThreadLocal 辅助类为各个线程提供一个单独的生成器， 不过 Java SE 7 还另外提供了一个便利类。只需要做以下调用：`int random = ThreadLocalRandom.current().nextInt(upperBound);`</br>`ThreadLocalRandom.current()` 调用会返回特定于当前线程的 Random 类实例
+
+### 锁测试与超时
+
++ `tryLock` 方法试图申请一个锁， 在成功获得锁后返回 true, 否则， 立即返回false, 而且线程可以立即离开去做其他事情：
+
+    ```java
+    if (myLock.tryLock()) {
+        //now the thread owns the lock
+        try {
+            ...
+        } finally {
+            myLock.unlock();
+        }
+    }
+    else
+        // do something else
+    ```
+
+    在调用tryLock时，可以设置超时参数：`if (myLock.tryLock(100, TimeUnit.MILLISECONDS))...`</br>
+    TimeUnit是一个枚举类型，取值可以包括：`SECONDS`, `MILLISECONDS`, `MICROSECONDS`, `NANOSECONDS`
++ 在等待一个条件时， 也可以提供一个超时：`myCondition.await(100, TimeUnit.MILLISECONDS)`
+
+### 读/写 锁
+
++ 使用读 / 写锁的必要步骤：
+    1. 构造一个`ReentrantReadWriteLock`对象：`ReentrantReadWriteLock rwl = new ReentrantReadWriteLock();`
+    2. 抽取读锁和写锁：
+
+        ```java
+        private Lock readLock = rwl.readLock();
+        private Lock writeLock = rwl.readLock();
+        ```
+
+    3. 对所有的获取方法加锁：
+
+        ```java
+        public double getTotalBalance() {
+            readLock.lock();
+            try {
+                ...
+            } finally {
+                readLock.unlock();
+            }
+        }
+        ```
+
+    4. 对所有修改方法加锁：
+
+        ```java
+        public void transfer(...) {
+            writeLock.lock();
+            try {
+                ...
+            } finally {
+                writeLock.unlock();
+            }
+        }
+        ```
+
+## 阻塞队列
+
++ 对于实际编程来说，应该尽可能远离底层结构。使用由并发处理的专业人士实现的较高层次的结构要方便得多、要安全得多
++ 对于许多线程问题， 可以通过使用 **一个或多个队列** 以优雅且安全的方式将其形式化。**生产者线程向队列插人元素**， **消费者线程则取出它们**。使用队列，可以安全地从一个线程向另一个线程传递数据
++ 阻塞队列方法
+    1. 试图向满的队列中添加或从空的队列中移出元素:
+        >方法|正常动作|特殊情况下的动作
+        >|:--|:-----|:-----------|
+        >add|添加一个元素|如果 **队列满**，则抛出 `IllegalStateException` 异常
+        >element|返回队列的头元素|如果 **队列空**，抛出 `NoSuchElementException` 异常
+        >remove|移出并返回头元素|如果 **队列空**， 则抛出 `NoSuchElementException` 异常
+    2. 在一个多线程程序中， 队列会在任何时候空或满:
+        >方法|正常动作|特殊情况下的动作
+        >|:--|:-----|:-----------|
+        >offer|添加一个元素并返回 true|如果 **队列满**，返回 false
+        >peek|返回队列的头元素|如果 **队列空**， 则返回 null
+        >poll|移出并返回队列的头元素|如果 **队列空**， 则返回 null
+    3. 将队列当作线程管理工具来使用：
+        >方法|正常动作|特殊情况下的动作
+        >|:--|:-----|:-----------|
+        >put|添加一个元素|如果 **队列满**， 则 **阻塞**
+        >take|移出并返回头元素|如果 **队列空**， 则 **阻塞**
+        + （poll和 peek 方法返回空来指示失败。 因此，向这些队列中 **插入null值是非法的**）
+        + 尝试用 100 毫秒的时间移除队列的头元素：`Object head = q.poll(100, TimeUnit.MILLISECONDS);`如果成功返回头元素，否则，达到在超时时，返回 nul
+        + 尝试在 100 毫秒的时间内在队列的尾部插入一个元素：`boolean success = q.offer(x, 100, TimeUnit.MILLISECONDS);`如果成功返回 true;否则，达到超时时，返回 false
++ 阻塞队列变种：
+    1. `LinkedBlockingQueue`：没有容量上限，也可以指定上限
+    2. `LinkedBlockingDeque`：双端队列
+    3. `ArrayBlockingQueue`：构造时需要指定容量，并有一个可选的参数来指定是否需要公平性，若设置公平参数，则等待时间最长的线程会被优先处理
+    4. `PriorityBlockingQueue`：优先级队列，元素按照优先级顺序被移出，队列没有上限
+    5. `DelayQueue`：延迟队列，元素只有在 **延迟用完** 的情况下才能从 DelayQueue 移除
+    6. `TransferQueue`接口，允许生产者线程等待， 直到消费者准备就绪可以接收一个元素，如果生产者调用`q.transfer(item);`这个调用会阻塞， 直到另一个线程将元素（item） 删除
+    7. `LinkedTransferQueue`类实现了TransferQueue接口
+
+## 线程安全的集合
+
+### 高效的映射、集和队列
+
++ `java.util.concurrent`包提供了映射、有序集和队列的高效实现：
+    1. `ConcurrentHashMap`
+    2. `ConcurrentSkipListMap`
+    3. `ConcurrentSkipListMap`
+    4. `ConcurrentLinkedQueue`
++ 并发的散列映射表， 可高效地支持大量的读者和一定数量的写者
+
+### 映射条目的原子更新
+
++ 传统的做法，使用`replace`操作，它会以原子方式用一个新值替换原值，前提是之前没有其他线程把原值替换为其他值。必须一直这么做， 直到 replace 成功：
+
+    ```java
+    do {
+        oldValue = map.get(word);
+        newValue = oldValue == null ? 1 : oldValue + 1;
+    } while (!map.replace(word, oldValue, newValue));
+    ```
+
++ 使用`ConcurrentHashMap<String, AtomicLong>`，或者在Java SE 8中，还可以使用`ConcurrentHashMap<String, LongAdder>`。更新代码如下：
+
+    ```java
+    map.putIfAbsent(word, new LongAdder());
+    map.get(word).increment();
+    //因为putIfAbsent返回映射的值，所以还可以简写为：
+    map.putIfAbsent(word, new LongAdder()).increment();
+    ```
+
++ 在Java SE 8中提供了一些可以更方便地完成原子更新地方法，如更新一个整数计数器的映射：
+
+    ```java
+    map.compute(word, (k, v) -> v == null ? 1 : v + 1);
+    ```
+
++ ConcurrentHashMap中不允许用null值
++ 另外还有：
+    1. `computeIfAbsent(word, k -> new LongAdder()).increment();`方法
+    2. `computeIfPresent()`方法
++ 首次增加一个键，通常需要特殊处理，此时使用`merge`方法
+
+    ```java
+    map.merge(word, 1L, (exitingValue, newValue) -> exitingValue + newValue);
+    //或者写为
+    map.merge(word, Long::sum);
+    ```
+
+### 对并发散列映射的批操作
+
++ 批操作会遍历映射，处理遍历过程中找到的元素。无须冻结当前映射的快照
++ 有三种不同的操作：
+    1. 搜索

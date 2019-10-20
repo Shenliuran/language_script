@@ -1,3 +1,2 @@
-use mydatabase;
-select * from country where country = 'Afghanistan';
-select * from city where city_id = 251;
+USE mydatabase;
+CREATE INDEX men_hash USING HASH ON tab_memory (city_id);
