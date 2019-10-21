@@ -455,3 +455,118 @@
 ## 执行器
 
 + 如果程序中创建了大量的 **生命期很短的线程**，应该使用 **线程池**（thread pool）
++ 将 Runnable 对象交给线程池， 就会有一个线程调用 run 方法。 当 run 方法退出时，**线程不会死亡**，而是在池中准备为下一个请求提供服务
++ 使用线程池可以减少并发线程的数目
++ 执行者（执行器`Executor`类）工厂方法：
+    >方法|描述
+    >|:--|:--|
+    >newCachedThreadPool|必要时创建新线程；空闲线程会被保留 60 秒
+    >newFixedThreadPool|该池包含固定数量的线程；空闲线程会一直被保留
+    >newSingleThreadExecutor|只有一个线程的 “池”， 该线程顺序执行每一个提交的任务（类似于Swing 事件分配线程）
+
+### 线程池
+
++ 三个提交任务的方法
+    >方法|功能
+    >|:--|:--|
+    >`Future<?> submit(Runnable task)`|可以使用这样一个对象来调用isDone、 cancel 或 isCancelled。但是， get 方法在完成的时候只是简单地返回 nul
+    >`Future<T> submit(Runnable task, T result)`|Future 的 get 方法在完成的时候返回指定的 result 对象
+    >`Future<T> submit(Callable<T> task)`|返回的 Future 对象将在计算结果准备好的时候得到它
++ 当用完一个线程池时，调用`shutdown`，启动该池的关闭序列，被关闭的执行器不在接受新的任务，当所有任务都完成之后，线程池中的线程死亡；另一种是调用`shutdownNow`
++ 使用线程池时应该做的事：
+    1. 调用`Executors`类中的静态方法：newCachedThreadPool或newFixedThreadPool
+    2. 调用`submit`提交Runnable或Callable对象
+    3. 如果需要取消一个任务，或者提交Callable对象，就要保存返回的Future对象
+    4. 不再提交任何任务时，调用shutdown
+
+### 控制任务组
+
++ `invokeAny`方法提交所有对象到一个Callable对象集合中，并返回某个已经完成了的任务结果，无法知道返回的究竟是哪个任务的结果
++ `invokeAll`方法提交所有对象到一个Callable对象集合中，并返回一个Future对象列表，代表所有任务的解决方案，当计算结果可获取是，可以像下面这样对结果进行处理：
+
+    ```java
+    List<Callable<T>> tasks = ...;
+    List<Future<T>> results = executor.invokeAll(tasks);
+    for (Future<T> result : results)
+        processFurther(result.get());
+    ```
+
+    缺点：如果第一个任务恰巧花去了很多时间，则可能不得不进行等待
++ 将结果按可获得的顺序保存起来更有实际意义。可以用 `ExecutorCompletionService` 来进行排列：
+
+    ```java
+    ExecutorCompletionService<T> service = new ExecutorCompletionService(executor);
+    for (Callable<T> task : task)
+        service.submit(task);
+    for (int i = 0; i < tasks.size(); i++)
+        processFurther(service.take().get());
+    ```
+
+### Fork-Join 框架
+
++ Fork/Join 框架是 Java7 提供了的一个用于并行执行任务的框架， 是一个把大任务分割成若干个小任务，最终汇总每个小任务结果后得到大任务结果的框架
++ 假设有一个处理任务， 它可以很自然地分解为子任务：
+
+    ```java
+    if (problemSize < threshold)
+        solve problem directly
+    else {
+        breaks problem into subproblems
+        recursively solve each subproblems
+        combines the results
+    }
+    ```
+
++ 具体实例：（统计一个数组中有多少个元素满足某个特定的属性。可以将这个数组一分为二，分别对这两部分进行统计， 再将结果相加）
+
+    ```java
+    class Counter extends RecursiveTask<Integer> {
+        ...
+        protected Integer compute() {
+            if (to - from < THRESHOLD)
+                solve problem directly
+            else {
+                int mid = (from + to) / 2;
+                Counter first = new Counter(values, from, mid, filter);
+                Counter second = new Counter(values, mid, to, filter);
+                invokeAll(first, second);
+                return first.join() + second.join();
+            }
+        }
+    }
+    ```
+
+### 可完成Future
+
++ 为 `CompletableFuture<T>` 对象增加一个动作：（这里把Function<? super T, U> 写成 T -> U）
+    >方法|参数|描述
+    >|:--|:--|:--|
+    >thenApply|T -> U|对结果应用一个函数
+    >thenCompose|T -> CompletableFuture\<U\>|对结果调用函数并执行返回的future
+    >handle|(T, Throwable) -> U|处理结果或错误
+    >thenAccept|T -> void|类似于thenApply，不过结果为void
+    >whenComplete|(T, Throwable) -> void|类似handle，不过结果为void
+    >thenRun|Runnable|执行Runnable，结果为void
++ 组合多个组合对象：
+    >方法|参数|描述
+    >|:--|:--|:--|
+    >thenCombine|CompletableFuture\<U\>, (T, U) -> V|执行两个动作并用给定函数组合结果
+    >thenAcceptBoth|CompletableFuture\<U\>, (T, U) -> void|与 thenCombine 类似， 不过结果为 void
+    >runAfterBoth|CompletableFuture<?>, Runnable|两个都完成后执行 runnable
+    >applyToEither|CompletableFuture\<T\>, T-> V|得到其中一个的结果时，传入给定的函数
+    >acceptEither|CompletableFuture\<T\>, T-> void|与 applyToEither 类似，不过结果为 void
+    >runAfterEither|CompletableFuture<?>, Runnable|其中一个完成后执行 runnable
+    >static allOf|CompletableFuture<?>"...|所有给定的 future 都完成后完成，结果为 void
+    >static anyOf|CompletableFuture<?>...|任意给定的 future 完成后则完成，结果为 void
+
+## 同步器
+
++ 如果有一个相互合作的线程集满足这些行为模式之一， 那么应该 **直接重用合适的库类** 而 **不要试图提供手工的锁与条件的集合**：
+    >类|它能做什么|说明
+    >|:--|:-----|:--|
+    >CyclicBarrier|允许线程集等待直至其中预定数目的线程到达一个公共障栅（ barrier，)</br>然后可以选择执行一个处理障栅的动作|当大量的线程需要在它们的结果可用之前完成时
+    >Phaser|类似于循环障栅，不过有一个可变的|计数 Java SE 7 中引人
+    >CountDownLatch|允许线程集等待直到计数器减为 0|当一个或多个线程需要等待直到指定数目的事件发生
+    >Exchanger|允许两个线程在要交换的对象准备好时交换对象|当两个线程工作在同一数据结构的两个实例上的时候， 一个向实例添加数据而另一个从实例清除数据
+    >Semaphore|允许线程集等待直到被允许继续运行为止|限制访问资源的线程总数。 如果许可数是 1，常常阻塞线程直到另一个线程给出许可为止
+    >SynchronousQueue|允许一个线程把对象交给另一个线程|在没有显式同步的情况下， 当两个线程准备好将一个对象从一个线程传递到另一个时
