@@ -1,2 +1,2 @@
 USE mydatabase;
-SELECT * FROM tab_memory;
+INSERT INTO vc VALUES('')

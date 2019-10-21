@@ -11,7 +11,7 @@
 + [Chapter 8 泛型泛型程序设计](https://github.com/Shenliuran/language_script/blob/master/Java/Chapter_8_泛型程序设计.md)
 + [Chapter 9 集合](https://github.com/Shenliuran/language_script/blob/master/Java/Chapter_9_集合.md)
 + [Chapter 13 部署Java应用程序](https://github.com/Shenliuran/language_script/blob/master/Java/Chapter_13_部署Java应用程序.md)
-+ [Chapter 14 并发(...)](https://github.com/Shenliuran/language_script/blob/master/Java/Chapter_14_并发.md)
++ [Chapter 14 并发](https://github.com/Shenliuran/language_script/blob/master/Java/Chapter_14_并发.md)
 
 ## UML_Self_Learning
 
@@ -28,7 +28,7 @@
 + [Chapter 3 MySQL支持的数据类型](https://github.com/Shenliuran/language_script/blob/master/MySQL/Chapter_3_MySQL%E6%94%AF%E6%8C%81%E7%9A%84%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B.md)
 + [Chapter 4 MySQL中的运算符](https://github.com/Shenliuran/language_script/blob/master/MySQL/Chpater_4_MySQL中的运算符.md)
 + [Chapter 5 常用函数](https://github.com/Shenliuran/language_script/blob/master/MySQL/Chapter_5_常用函数.md)
-+ [Chapter 7 表类型（储存引擎）的选择 (...)](https://github.com/Shenliuran/language_script/blob/master/MySQL/Chapter_7_表类型（储存引擎）的选择.md)
++ [Chapter 7 表类型（储存引擎）的选择](https://github.com/Shenliuran/language_script/blob/master/MySQL/Chapter_7_表类型（储存引擎）的选择.md)
 
 ## JavaScript
 
