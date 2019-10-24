@@ -34,13 +34,15 @@
             >|:--|:--|:--|:--|
             >可读（read）|可写（write）|可执行（execute）|无任何权限
             >三个权限的位置不会变：\[读 写 执行\]
-
+https://github.com/Shenliuran/language_script.git
            1. 第一组：文件拥有者权限（user权限）
            2. 第二组：群组权限（group权限）
            3. 第三组：其他账号权限（other权限）
 
 ### 改变文件属性与权限
-
-+ `chgrp`：改变文件所属群组
-+ `chown`：改变文件拥有者
++ 三种命令都需要管理员权限：`sudo`
++ `chgrp`：改变文件所属群组:`chgrp "hero" filename`
++ `chown`：改变文件拥有者:
+	1. `chown "hero" filename`
+	2. 将拥有者和群组改回liuranshen:`chown liuranshen:liuranshen filename`
 + `chmod`：改变文件权限，`SUID`, `SGID`, `SBIT`等等
