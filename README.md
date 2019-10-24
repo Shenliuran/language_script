@@ -29,6 +29,8 @@
 + [Chapter 4 MySQL中的运算符](https://github.com/Shenliuran/language_script/blob/master/MySQL/Chpater_4_MySQL中的运算符.md)
 + [Chapter 5 常用函数](https://github.com/Shenliuran/language_script/blob/master/MySQL/Chapter_5_常用函数.md)
 + [Chapter 7 表类型（储存引擎）的选择](https://github.com/Shenliuran/language_script/blob/master/MySQL/Chapter_7_表类型（储存引擎）的选择.md)
++ [Chapter 8 选择合适的数据类型](https://github.com/Shenliuran/language_script/blob/master/MySQL/Chapter_8_选择合适的数据类型.md)
++ [Chapter 9 字符集 (...)](https://github.com/Shenliruan/langugage_script/blob/master/MySQL/Chapter_9_字符集.md)
 
 ## JavaScript
 
