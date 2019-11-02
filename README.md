@@ -12,6 +12,7 @@
 + [Chapter 9 集合](https://github.com/Shenliuran/language_script/blob/master/Java/Chapter_9_集合.md)
 + [Chapter 13 部署Java应用程序](https://github.com/Shenliuran/language_script/blob/master/Java/Chapter_13_部署Java应用程序.md)
 + [Chapter 14 并发](https://github.com/Shenliuran/language_script/blob/master/Java/Chapter_14_并发.md)
++ [Chapter 15 JAVA SE 8的流库](https://github.com/Shenliura/language_script/blob/master/Java/Chapter_15_Java_SE_8的流库.md)
 
 ## UML_Self_Learning
 
@@ -30,7 +31,7 @@
 + [Chapter 5 常用函数](https://github.com/Shenliuran/language_script/blob/master/MySQL/Chapter_5_常用函数.md)
 + [Chapter 7 表类型（储存引擎）的选择](https://github.com/Shenliuran/language_script/blob/master/MySQL/Chapter_7_表类型（储存引擎）的选择.md)
 + [Chapter 8 选择合适的数据类型](https://github.com/Shenliuran/language_script/blob/master/MySQL/Chapter_8_选择合适的数据类型.md)
-+ [Chapter 9 字符集 (...)](https://github.com/Shenliruan/langugage_script/blob/master/MySQL/Chapter_9_字符集.md)
++ [Chapter 9 字符集](https://github.com/Shenliruan/langugage_script/blob/master/MySQL/Chapter_9_字符集.md)
 
 ## JavaScript
 

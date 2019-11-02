@@ -149,3 +149,14 @@
     6. 如果特别需要Lock/Condition结构提供的独有特性时，才使用它们
 8. 如果向一个变量写入值， 而这个变量接下来可能会被另一个线程读取， 或者，从一个变量读值， 而这个变量可能是之前被另一个线程写入的， 此时必须使用同步
 9. 对于实际编程来说，应该尽可能远离底层结构。使用由并发处理的专业人士实现的较高层次的结构要方便得多、 要安全得多
+
+## 第十六章 输入与输出
+
+1. 对于可移植的程序来说, 应该使用程序所运行平台的文件分隔符, 可以通过常量字符串`java.io.File.separator`来获得
+2. 应该总是在`InputStreamReader`的构造器中选择一种具体的编码方式，例如：
+
+    ```java
+    Reader in = InputStreamReader(new FileInputStream("data.txt"), StandardCharsets.UTF_8);
+    ```
+
+3. 在读写文本的时候，应该使用`Charset`对象：`String str = new String(bytes, StandardChatses.UTF_8)`

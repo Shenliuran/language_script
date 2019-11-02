@@ -140,3 +140,108 @@
     ```
 
 ## 收集结果
+
++ 可以调用`iterator`方法，查看流中的元素，它会产生可以用来访问元素的旧式风格的迭代器
++ 或者调用`forEach`方法，将某个函数应用与每个元素：
+
+    ```java
+    stream.forEach(System.out::println);
+    ```
+
+    1. 在并行流上，forEach方法以 **任意顺序** 遍历各个元素
+    2. 如果希望按照流中元素的顺序来处理这些元素，可以调用`forEachOrdered`方法
+
++ 更常见的情况，是将结果收集到数据结构中，此时，可以调用`toArray`，获取有流中元素构成的数组，stream.toArray()会返回一个`Object[]`数组。如果想要让数组具有正确的类型，可以将其传递到数组构造器中：
+
+    ```java
+    String[] result = stream.toArray(String[]::new);
+        //stream.toArray() has type Object[]
+    ```
+
++ 也可以使用一个便捷的方法`collect`，其接受一个Collector接口的实例：
+
+    ```java
+    List<String> result = stream.collect(Collectors.toList());
+    //或者
+    List<String> result = stream.collect(Collectors.toSet());
+    ```
+
++ 如果想要控制获得的集的种类，可以使用下面的调用：
+
+    ```java
+    TreeSet<String> result = stream.collect(Collectors.toCollection(TreeSet::new));
+    ```
+
++ 通过连接操作来收集流中的所有字符串，可以调用：
+
+    ```java
+    String result = stream.collect(Collectors.joining());
+    //在元素之间增加分隔符，可以将分隔符传递个joining方法：
+    String result = stream.collect(Collectors.joining(", "));
+    ```
+
++ 如果流中包含除了字符串以外的其他对象，那么我们需要现将其转换为字符串：
+
+    ```java
+    String result = stream.map(Object::toString).collect(Collectors.joining(", "));
+    ```
+
+## 约简操作
+
++ `reduce`方法是一种用于从流中计算某个值的通用机制，其最简单的形式将接受一个二元函数，并从前两个元素开始持续使用它：
+
+    ```java
+    List<Integer> values = ...;
+    Optional<Integer> sum = values.stream().reduce((x, y) -> x + y);
+    ```
+
+    上面的操作可以写成：`reduce(Integer::sum);`
+
++ 如果使用数学中幺元的概念，可以写成第二种形式：
+
+    ```java
+    List<Integer> values = ...;
+    Optional<Integer> sum = values.stream().reduce(0, (x, y) -> x, y);
+    ```
+
+## 基本类型流
+
++ `IntStream`用来存储：short、char、byte、boolean、int
+    1. 创建IntStream，需要调用`Intstream.of`和`Arrays.stream`方法：
+
+        ```java
+        IntStream stream = IntStream.of(1, 1, 2, 3, 5);
+        stream = Arrays.stream(values, from, to); //values is an int[] arrays
+        ```
+
+    2. 生成步长为1的整数范围：
+
+        ```java
+        IntStream zeroToNinetyNine = IntStream.range(0, 100); //Upper bound is exclude
+        IntStream zeroToHundred = IntStream.rangeClosed(0, 100); //Upper bound is include
+        ```
+
++ `DoubleStream`用来储存：double、float
++ `LongStream`用来存储：Long
+
+## 并行流
+
++ `Collection.parallelStream()`方法可以从任何集合中获取一个并行流
+
+    ```java
+    Stream<String> parallelWords = words.parallelStream();
+    ```
+
++ `parallel()`方法可以将任意的顺序流转换为并行流
+
+    ```java
+    Stream<String> parallelWords = Stream.of(words).parallel();
+    ```
+
++ 让并行流正常工作的条件：
+    1. 数据必须在内存中，必须等到数据的到达是非常低效的
+    2. 流应该可以被高效的分成若干个子部分
+    3. 流操作的工作量必须具有较大的规模
+    4. 流操作不应该被堵塞
+
++ 不是所有流都转换为并行流，只有在对已经位于内存中的数据执行大量操作计算时，才应该使用并行流
