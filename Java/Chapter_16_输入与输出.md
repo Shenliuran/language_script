@@ -182,3 +182,194 @@
     3. 将以上两个方法放到`DataIO`助手类的内部
 
 ### ZIP文档
+
++ 使用`ZipInputStream`读入zip文档
++ `getNextEntry`方法返回一个描述这些项的ZipEntry类型的对象
++ 代码如下：
+
+    ```java
+    ZipInputStream zin = new ZipInputStream(new FileInputStream(zipname));
+    ZipEntry entry;
+    while ((entry = zin.getNextEntry()) ! = null) {
+        InputStream in = zin.getInputStream(entry);
+        read the contents of in
+        zin.closeEntry();
+    }
+    zin.close();
+    ```
+
++ 使用`ZipOutputStream`写出zip文件，对于希望zip文件中的每一项，都应该创建一个ZipEntry对象，并将文件名传递给ZipEntry的构造器
++ 调用`pubNextEntry`方法来写入新的文件
++ 代码如下：
+
+    ```java
+    FileOutputStream font = new FileOutputStream("test.zip");
+    ZipOutputStream zout = new ZipOutputStream(font);
+    //for all files
+    {
+        ZipEntry ze = new ZipEntry(filename);
+        zout.putNextEntry(ze);
+        send data to zout;
+        zout.closeEntry();
+    }
+    zout.close();
+    ```
+
+## 对象输入/输出流与序列化
+
+### 保存和加载序列化对象
+
++ 为了保存对象数据，首先要打开一个`ObjectOutputStream`对象：
+
+    ```java
+    ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("employee.dat"));
+    ```
+
++ 使用`writeObject`方法，保存对象：
+
+    ```java
+    Employee harry = new Employee("Harry Hacker", 50000, 1989, 10, 1);
+    Employee boss = new Employee("Carl Craker", 80000, 1987, 12,, 15);
+    out.writeObject(harry);
+    out.writeObject(boss);
+    ```
+
++ 读回对象使用`ObjectIuputStream`的`readObject`方法
++ 如果希望在对象输出流中储存或从对象输入流中回复的所有流都进行修改，则这些类需要实现`Seerialiazble`接口（这是标记接口）
++ 对象被重新加载时，可能占据的是与原来完全不同的内存地址
++ 归纳：
+    1. 对象流中输出包含所有对象的类型和数据域
+    2. 每个对象都被赋予一个序列号
+    3. 相同对象的重复出现将被储存为这个对象的序列号的引用
+
+### 修改默认的序列化机制
+
++ `transient`关键字，防止某些域被序列化，简单地说，就是被transient关键字修饰的对象，将不会被序列化
+
+### 版本管理
+
++ 对象输入流拒绝读入具有不同指纹的对象
++ 如果类想要对其早期版本保持兼容看，需要首先获取这个类的早期版的指纹，可以使用jdk中的单机程序serialver来获取这个数字：</br>
+`serialver classname`
++ 这个类的所有较新的版本都必须把`serialVersionUID`常量定义为与最初版本的指纹相同：
+
+    ```java
+    class Employee implements Sarializable {
+        public static final long serialVersionUID = ...;
+    }
+    ```
+
++ 如果一个类具有名为serialVersionUID的静态数据成员，就不再需要人工计算其指纹，而只需要直接使用这个值
++ 一旦这个静态数据成员被置于某个类的内部，那么序列化系统就可以读入这个类的对象的不同版本
+
+### 为克隆使用序列化
+
++ 序列化机制有一种有趣的用法：提供了一种克隆对象的简便途径，只要对应的类是序列化即可
++ 做法为：直接将对象序列化到输入流中，然后将其读回
++ 这样产生的新对象是现有对象的一个深拷贝
++ 使用`ByteArrayOutputStream`将数据保存到字节数组中，而不需要将对象写入到文件中
+
+## 操作文件
+
+### Path
+
++ Path表示一个目录名序列，其后还可以跟着一个文件名
++ 路径可以是相对路径或是绝对路径
++ 第一部分是根目录，"/"或"C:/"
++ 使用静态的`get`方法接受一个或多个字符串，使用系统默认文件系统的路径分隔符连接
++ 可以从配置文件中读取路径：
+
+    ```java
+    String baseDir = props.getProperty("base.dir");
+    //May be a string such as /opt/myprog or C:\Program Files\myprog
+    Path basePath = Paths.get(baseDir);
+    ```
+
++ 路径不必实际对应着某个实际存在的文件，仅仅是一个抽象的名字序列
++ `resolve()`方法将按照下面规则返回一个路径：`p.resolve(q)`
+
+    1. 如果q是绝对路径，则结果就是q
+    2. 否则，根据文件系统的规则，将“p后面跟着q”作为结果
+
++ resolve的对立面是relativize，调用`p.relativize(r))`将产生路径q，而对q进行解析的结果正是r
+
+### 创建文件和目录
+
++ `Files.createDirectory(path)`创建新目录，其中，路径中除了最后一个部件外，其他部分必须存在
++ `Files.createDirectoris(path)`创建路劲中的中间目录
++ `Files.createFile(path)`创建空文件，如果文件已经存在，回抛出异常
++ 在指定位置创建临时文件或临时目录：（prefix是前缀，suffix是后缀）
+    1. `Path newPath = Files.createTempFile(dir, prefix, suffix)`
+    2. `Path newPath = Files.createTempFile(prefix, suffix)`
+    3. `Path newPath = Files.createTempDirectory(dir, prefix)`
+    4. `Path newPath = Files.createTempDirectory(prefix)`
+
+### 复制、移动和删除文件
+
++ 复制文件：`Files.copy(originalPath, newPath)`
++ 移动文件：`Files.move(originalPath, newPath)`
++ 如果目标路径已经存在，那么复制或是移动将失败
++ 可以使用`REPLACE_EXISTING`选项，覆盖已有的目标路径
++ 使用`COPY_ATTRIBUTES`选项，复制文件的所有属性
++ 也可以同时使用：
+
+    ```java
+    Files.copy(fromPath, toPath, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.COPY_ATTRIBUTES);
+    ```
+
++ 使用`ATOMIC_MOVE`选项，将移动操作定义为原子性的，这样可以保证要么移动操作成功完成，要么源文件继续保持在原来的位置
++ 将输入流复制到Path中，表示想要将输入流存储到硬盘上：`Files.copy(inputStream, toPath)`
++ 将Path复制到输入流中：`Files.copy(fromPath, outputStream)`
++ 删除文件：`Files.delete(path)`
++ 如果删除的文件不存在，delete方法回抛出异常，此时可以使用下面的方法：
+
+    ```java
+    boolean deleted = Files.deleteIfExists(path);
+    ```
+
+    该删除方法可以用来删除空目录
++ 用于文件操作的标准选项
+    1. StandardOpenOption，与newBufferedWriter, newInputStream, newOutputStream, write一起使用
+        >选项|描述
+        >|:-|:---|
+        >READ|用于读取而打开
+        >WRITE|用于写入而打开
+        >APPEDN|如果用于写入而打开，那么在文件末尾追加
+        >TRUNCATE_EXITSING|如果用于写入而打开，那么删除已有内容
+        >CREATE_NEW|创建新文件并且在文件已存在的情况下会创建失败
+        >CREATE|自动在文件不存在的情况下创建新的文件
+        >DELETE_ON_CLOSE|在文件被关闭时，尽可能地删除该文件
+        >SPARSE|给系统一个提示，表示该文件是稀疏的
+        >DSYN \ SYN|要求对文件数据\数据和元数据的每次更新都必须同步地写入到存储设备中
+    2. StandardCopyOption，与copy, move一起使用
+        >选项|描述
+        >|:-|:---|
+        >ATOMIC_MOVE|原子性地移动文件
+        >COPY_ATTRIBUTES|复制文件属性
+        >REPLACE_EXISTING|如果文件已存在，则替换它
+        >LinkOption|与上面的方法以及exists, isDirectory, isRegulerFile等一起使用
+        >NOFOLLOW_LINKS|不要跟踪符号链接
+    3. FileVisitOption，与find, walk, walkFileTree一起使用
+        >选项|描述
+        >|:-|:---|
+        >FOLLOW_LINKES|跟踪符号链接
+
+### 获取文件信息
+
++ 路径的属性：
+    1. exist
+    2. isHidden
+    3. isReadalbe, isWritable, isExecutable
+    4. isRegularFile, isDirectory, isSymbolicLink
++ `size`方法返回文件的 **字节数**
++ 所有文件系统都会报告一个基本属性集，它们被封装在`BasicFileAttributes`接口中
+
+### 访问目录中的项
+
++ 静态`Files.list`方法返回一个可以读取目录各个项的`Stream<Path>`对象，此时目录被惰性读取
++ 因为涉及到系统文件的关闭，所以最好使用try块
++ 调用`File.walk(pathToRoot, depth)`来限制想要访问的文件树的深度
+
+### 使用目录流
+
++ 使用格式

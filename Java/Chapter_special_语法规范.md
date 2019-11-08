@@ -160,3 +160,4 @@
     ```
 
 3. 在读写文本的时候，应该使用`Charset`对象：`String str = new String(bytes, StandardChatses.UTF_8)`
+4. 要向遗留代码中所有类型安全的枚举以及向所有支持单例设计模式的类中添加`readResolve`方法
