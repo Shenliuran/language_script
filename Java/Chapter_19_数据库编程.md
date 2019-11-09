@@ -136,3 +136,16 @@
     6. 关闭数据库连接
 
 ## 执行查询操作
+
+### 预备语句
+
++ 通过使用带有宿主变量的查询语句，可以避免在每次开始一个查询时都要建立新的查询语句
++ 在预备查询语句中，每个宿主变量都用“?”表示，例如：
+
+    ```java
+    String publisherQuery =
+        "SELECT Books.Price, Books.Title" +
+        "FROM Books, Publishers" +
+        "WHERE Books.Publisher_Id = Publishers.Publisher_Id AND Publishers.Name = ?";
+    PerpaerdStatement state = conn.prepareStatement(publisherQuery);
+    ```
