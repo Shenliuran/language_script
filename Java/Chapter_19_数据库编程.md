@@ -149,3 +149,56 @@
         "WHERE Books.Publisher_Id = Publishers.Publisher_Id AND Publishers.Name = ?";
     PerpaerdStatement state = conn.prepareStatement(publisherQuery);
     ```
+
+### 读写LOB
+
++ 在SQL中，二进制大对象称为`BLOB`，字符型大对象称为`CLOB`
++ 要读取LOB，需要执行SELECT语句，然后在ResultSet上调用`getBlob`和`getClob`方法
++ 要从Blob中获取二进制数据，可以调用`getBytes`或者`getBinaryStream`，如保存图像：
+
+    ```java
+    state.set(1, isbn);
+    try (ResultSet result = state.executeQuery()) {
+        if (result.next()) {
+            Blob coverBlob = result.getBlob();
+            Image coverImage = ImageIO.read(coverBlob.getBinaryStream());
+        }
+    }
+    ```
+
++ 类似地，如果获取了Clob对象，可以调用`getSubString()`和`getCharacterStream()`方法来获取其中的字符数据
++ 使用`Connection`对象，调用`createBlob`或`createClob`，获取一个用于该LOB的输入流或写出器，如存储一张图像：
+
+    ```java
+    Blob coverBlob = connection.createBlob();
+    int offset = 0;
+    OutputStream out = coverBlob.setBinaryStream(offset);
+    ImageIO.write(coverImage, "PNG", out);
+    PreparedStatement state = conn.prepareStatement("INSERT INTO Cover VALUES(?, ?)");
+    state.set(1, isbn);
+    state.set(2, coverBlob);
+    state.executeUpdate();
+    ```
+
+### SQL转义
+
++ 转义主要用于下列场景：
+    1. 日期和字面常量、
+        1. 使用`d`表示`DATA`：`{d '2008-01-24'}`
+        2. 使用`t`表示`TIME`：`{t '23:59:59'}`
+        3. 使用`ts`表示`TIMESTAMP`：`{ts '2008-01-24 23:59:59'}`
+    2. 调用标量函数（标量函数：传入参数个数不定，但是返回值只有一个）需要向下面这样嵌入标准的函数名和参数：
+        1. `{fn left(?, 20)}`
+        2. `{fn user()}`
+        3. 在JDBC规范中可以找到它支持的函数名的完成列表
+    3. 调用存储过程，调用存储过程需要使用`call`转义命令，使用`=`来捕获存储过程返回值：
+        1. `{call PROC1(?, ?)}`
+        2. `{call PROC2}`
+        3. `{call ? = PROC3(?)}`
+    4. 外连接
+    5. 在`LIKE`子句中的转义字符
+        1. 如果想要匹配所有包含"_"字符的字符串，就必须使用下面的结构：`... WHERE ? LIKE %_% {escape '!'}`
+
+### 多结果集
+
++ 下面是获取所有结果集的步骤
